@@ -21,11 +21,6 @@ interface AnalysisResult {
   prep: string;
 }
 
-interface ResumeInfo {
-  loaded: boolean;
-  filename: string | null;
-}
-
 export default function JobApplicationUI() {
   const { shared, mergeShared } = useSharedContext();
   const [mode, setMode] = useState<InputMode>("text");
@@ -36,18 +31,10 @@ export default function JobApplicationUI() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult, clearResult] = useLocalStorage<AnalysisResult | null>("ja:analysis", null);
-  const [resume, setResume] = useState<ResumeInfo | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const toast = useToast();
   const elapsed = useElapsedSeconds(loading);
-
-  useEffect(() => {
-    fetch("/api/resume-info")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => d && setResume(d))
-      .catch(() => setResume(null));
-  }, []);
 
   useEffect(() => {
     if (!imageFile) { setImagePreview(null); return; }
@@ -113,16 +100,6 @@ export default function JobApplicationUI() {
     <Panel
       title="Job Application"
       subtitle="Analyse a JD against your resume and get interview prep"
-      actions={
-        <span
-          className={`shrink-0 rounded-full border px-2.5 py-1 text-xs ${
-            resume?.loaded ? "border-accent/40 text-accent" : "border-border text-muted"
-          }`}
-          title={resume?.loaded ? "Resume loaded from backend data/" : "No resume found in data/"}
-        >
-          {resume?.loaded ? `📄 ${resume.filename}` : "No resume loaded"}
-        </span>
-      }
     >
       <div className="flex gap-2">
         <button className={tabClass(mode === "text")} onClick={() => setMode("text")}>Paste JD</button>

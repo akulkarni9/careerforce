@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import JobApplicationUI from "./components/JobApplicationUI";
 import CareerAdvisorUI from "./components/CareerAdvisorUI";
@@ -159,6 +159,35 @@ const GROUP_ORDER = ["Apply", "Prepare", "Grow"] as const;
 export default function App() {
   const [activeId, setActiveId] = useState<string>(TOOLS[0].id);
   const active = TOOLS.find((t) => t.id === activeId) ?? TOOLS[0];
+  const [resumeName, setResumeName] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetch("/api/resume-info")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => d && setResumeName(d.filename))
+      .catch(() => {});
+  }, []);
+
+  async function handleResumeUpload(file: File | undefined) {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/upload-resume", { method: "POST", body: form });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        alert(d.detail ?? "Upload failed");
+        return;
+      }
+      const d = await res.json();
+      setResumeName(d.filename);
+    } finally {
+      setUploading(false);
+    }
+  }
 
   return (
     <div className="flex h-full flex-col">
@@ -169,6 +198,24 @@ export default function App() {
         <div>
           <h1 className="text-base font-semibold tracking-tight text-content">CareerForge</h1>
           <p className="text-xs text-muted">AI-powered application &amp; career toolkit</p>
+        </div>
+        <div className="ml-auto">
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".docx,.pdf"
+            className="hidden"
+            onChange={(e) => handleResumeUpload(e.target.files?.[0])}
+          />
+          <button
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+            className={`rounded-full border px-3 py-1.5 text-xs transition ${
+              resumeName ? "border-accent/40 text-accent" : "border-border text-muted hover:text-content hover:border-accent"
+            }`}
+          >
+            {uploading ? "Uploading..." : resumeName ? `📄 ${resumeName}` : "Upload Resume"}
+          </button>
         </div>
       </header>
 

@@ -18,6 +18,8 @@ from database.connection import get_pool
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await get_pool()
+    from resume import setup_table
+    await setup_table()
     yield
     from database.connection import _pool
     if _pool:

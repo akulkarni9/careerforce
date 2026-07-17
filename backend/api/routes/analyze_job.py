@@ -25,9 +25,9 @@ async def analyze_job(
         raise HTTPException(status_code=400, detail="Provide either jd_text or jd_image.")
 
     try:
-        master_resume = load_resume()
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        master_resume = await load_resume()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
     raw_jd: Union[str, dict[str, str]]
     if jd_image:
