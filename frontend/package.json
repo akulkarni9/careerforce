@@ -1,6 +1,7 @@
 {
   "name": "careerforge-frontend",
   "version": "1.0.0",
+  "homepage": "https://ajaykulkarni178.gitlab.io/careerforce",
   "type": "module",
   "scripts": {
     "dev": "vite",
