@@ -210,6 +210,18 @@ python ../scripts/ingest.py
 
 ---
 
+## Switching Models
+
+To use a different Ollama model, edit a single line in `backend/.env`:
+
+```
+OLLAMA_MODEL=gemma4:26b   ← replace with any model you have pulled
+```
+
+`config.py` reads this at startup and `llm.py` passes it to every node via `build_llm()`. No code changes needed — restart uvicorn after editing.
+
+---
+
 ## Running Everything
 
 | Terminal | Command |
