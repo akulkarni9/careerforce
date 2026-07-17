@@ -1,0 +1,15 @@
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+pydantic-settings
+langchain
+langchain-core
+langchain-ollama
+langchain-postgres
+langchain-text-splitters
+langgraph
+langgraph-checkpoint-postgres
+psycopg[binary,pool]
+pgvector
+python-docx
