@@ -1,0 +1,13 @@
+pages:
+  image: node:alpine
+  stage: deploy
+  script:
+    - cd frontend                # Move into the frontend directory
+    - npm install
+    - npm run build
+    - cp -r build ../public      # Copy build to a public folder in the root
+  artifacts:
+    paths:
+      - public                   # GitLab looks for this folder in the root
+  only:
+    - main
