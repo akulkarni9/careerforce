@@ -31,8 +31,8 @@ async def mock_interview(body: InterviewTurn):
         # Starting a new interview: seed JD + resume, let the model open.
         thread_id = str(uuid4())
         try:
-            resume = load_resume()
-        except FileNotFoundError:
+            resume = await load_resume()
+        except (ValueError, FileNotFoundError):
             resume = ""
         state_input = {"messages": [], "jd": body.jd_text, "resume": resume}
 

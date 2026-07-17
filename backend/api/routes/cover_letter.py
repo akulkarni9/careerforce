@@ -14,10 +14,10 @@ class CoverLetterRequest(BaseModel):
     extra: str = ""
 
 
-def _resume_or_empty() -> str:
+async def _resume_or_empty() -> str:
     try:
-        return load_resume()
-    except FileNotFoundError:
+        return await load_resume()
+    except (ValueError, FileNotFoundError):
         return ""
 
 
@@ -26,7 +26,7 @@ async def cover_letter(body: CoverLetterRequest):
     if not body.jd_text.strip():
         raise HTTPException(status_code=400, detail="Provide the job description text.")
 
-    result = await generate_cover_letter(body.jd_text, _resume_or_empty(), body.tone, body.extra)
+    result = await generate_cover_letter(body.jd_text, await _resume_or_empty(), body.tone, body.extra)
     return {"result": result}
 
 
@@ -36,5 +36,5 @@ async def cover_letter_stream(body: CoverLetterRequest):
         raise HTTPException(status_code=400, detail="Provide the job description text.")
 
     return sse_response(
-        stream_cover_letter(body.jd_text, _resume_or_empty(), body.tone, body.extra)
+        stream_cover_letter(body.jd_text, await _resume_or_empty(), body.tone, body.extra)
     )

@@ -16,10 +16,10 @@ class NetworkingRequest(BaseModel):
     context: str = ""
 
 
-def _resume_or_empty() -> str:
+async def _resume_or_empty() -> str:
     try:
-        return load_resume()
-    except FileNotFoundError:
+        return await load_resume()
+    except (ValueError, FileNotFoundError):
         return ""
 
 
@@ -29,7 +29,7 @@ async def networking_message(body: NetworkingRequest):
         raise HTTPException(status_code=400, detail="Provide some context or a target company.")
 
     result = await write_networking_message(
-        body.recipient, body.platform, body.company, body.role, body.context, _resume_or_empty()
+        body.recipient, body.platform, body.company, body.role, body.context, await _resume_or_empty()
     )
     return {"result": result}
 
@@ -41,6 +41,6 @@ async def networking_message_stream(body: NetworkingRequest):
 
     return sse_response(
         stream_networking_message(
-            body.recipient, body.platform, body.company, body.role, body.context, _resume_or_empty()
+            body.recipient, body.platform, body.company, body.role, body.context, await _resume_or_empty()
         )
     )

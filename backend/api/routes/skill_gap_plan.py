@@ -13,10 +13,10 @@ class SkillGapRequest(BaseModel):
     jd_text: str = ""
 
 
-def _resume_or_empty() -> str:
+async def _resume_or_empty() -> str:
     try:
-        return load_resume()
-    except FileNotFoundError:
+        return await load_resume()
+    except (ValueError, FileNotFoundError):
         return ""
 
 
@@ -25,7 +25,7 @@ async def skill_gap_plan(body: SkillGapRequest):
     if not body.target_role.strip() and not body.jd_text.strip():
         raise HTTPException(status_code=400, detail="Provide a target role or a job description.")
 
-    result = await build_skill_gap_plan(body.target_role, body.jd_text, _resume_or_empty())
+    result = await build_skill_gap_plan(body.target_role, body.jd_text, await _resume_or_empty())
     return {"result": result}
 
 
@@ -34,4 +34,4 @@ async def skill_gap_plan_stream(body: SkillGapRequest):
     if not body.target_role.strip() and not body.jd_text.strip():
         raise HTTPException(status_code=400, detail="Provide a target role or a job description.")
 
-    return sse_response(stream_skill_gap_plan(body.target_role, body.jd_text, _resume_or_empty()))
+    return sse_response(stream_skill_gap_plan(body.target_role, body.jd_text, await _resume_or_empty()))

@@ -15,10 +15,10 @@ class NegotiationRequest(BaseModel):
     competing: str = ""
 
 
-def _resume_or_empty() -> str:
+async def _resume_or_empty() -> str:
     try:
-        return load_resume()
-    except FileNotFoundError:
+        return await load_resume()
+    except (ValueError, FileNotFoundError):
         return ""
 
 
@@ -28,7 +28,7 @@ async def salary_negotiation(body: NegotiationRequest):
         raise HTTPException(status_code=400, detail="Provide the offer details to negotiate.")
 
     result = await coach_negotiation(
-        body.role, body.offer, body.location, body.competing, _resume_or_empty()
+        body.role, body.offer, body.location, body.competing, await _resume_or_empty()
     )
     return {"result": result}
 
@@ -40,6 +40,6 @@ async def salary_negotiation_stream(body: NegotiationRequest):
 
     return sse_response(
         stream_coach_negotiation(
-            body.role, body.offer, body.location, body.competing, _resume_or_empty()
+            body.role, body.offer, body.location, body.competing, await _resume_or_empty()
         )
     )
