@@ -210,11 +210,14 @@ export default function App() {
           <button
             onClick={() => fileRef.current?.click()}
             disabled={uploading}
-            className={`rounded-full border px-3 py-1.5 text-xs transition ${
-              resumeName ? "border-accent/40 text-accent" : "border-border text-muted hover:text-content hover:border-accent"
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition ${
+              resumeName
+                ? "border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20"
+                : "bg-accent text-white shadow-md shadow-accent/30 hover:bg-accent-hover"
             }`}
           >
-            {uploading ? "Uploading..." : resumeName ? `📄 ${resumeName}` : "Upload Resume"}
+            <span>{resumeName ? "📄" : "⬆️"}</span>
+            {uploading ? "Uploading..." : resumeName ? resumeName : "Upload Resume"}
           </button>
         </div>
       </header>
