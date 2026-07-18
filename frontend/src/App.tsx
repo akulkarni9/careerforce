@@ -162,6 +162,7 @@ export default function App() {
   const active = TOOLS.find((t) => t.id === activeId) ?? TOOLS[0];
   const [resumeName, setResumeName] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -192,15 +193,24 @@ export default function App() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex items-center gap-3 border-b border-border px-6 py-4">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-hover text-sm font-bold text-white shadow-lg shadow-accent/20">
+      <header className="flex items-center gap-3 border-b border-border px-4 py-3 md:px-6 md:py-4">
+        <button
+          className="rounded-md p-1.5 text-muted transition hover:bg-surface hover:text-content md:hidden"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open menu"
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M2 4h14M2 9h14M2 14h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        </button>
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-hover text-sm font-bold text-white shadow-lg shadow-accent/20">
           CF
         </div>
-        <div>
+        <div className="min-w-0">
           <h1 className="text-base font-semibold tracking-tight text-content">CareerForge</h1>
-          <p className="text-xs text-muted">AI-powered application &amp; career toolkit</p>
+          <p className="hidden text-xs text-muted sm:block">AI-powered application &amp; career toolkit</p>
         </div>
-        <div className="ml-auto">
+        <div className="ml-auto shrink-0">
           <input
             ref={fileRef}
             type="file"
@@ -211,20 +221,46 @@ export default function App() {
           <button
             onClick={() => fileRef.current?.click()}
             disabled={uploading}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition ${
+            className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition sm:px-4 ${
               resumeName
                 ? "border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20"
                 : "bg-accent text-white shadow-md shadow-accent/30 hover:bg-accent-hover"
             }`}
           >
             <span>{resumeName ? "📄" : "⬆️"}</span>
-            {uploading ? "Uploading..." : resumeName ? resumeName : "Upload Resume"}
+            <span className="hidden sm:inline">
+              {uploading ? "Uploading..." : resumeName ? resumeName : "Upload Resume"}
+            </span>
+            <span className="sm:hidden">
+              {uploading ? "..." : resumeName ? "Resume" : "Upload"}
+            </span>
           </button>
         </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        <nav className="w-56 shrink-0 overflow-y-auto border-r border-border bg-surface/40 px-3 py-4">
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 z-30 bg-black/50 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        <nav
+          className={`fixed inset-y-0 left-0 z-40 w-64 shrink-0 overflow-y-auto border-r border-border bg-surface px-3 py-4 transition-transform duration-200 md:relative md:inset-auto md:z-auto md:w-56 md:translate-x-0 md:bg-surface/40 md:transition-none ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <div className="mb-4 flex items-center justify-between md:hidden">
+            <span className="text-sm font-semibold text-content">Menu</span>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="rounded-md p-1 text-muted transition hover:text-content"
+            >
+              ✕
+            </button>
+          </div>
+
           {GROUP_ORDER.map((group) => (
             <div key={group} className="mb-4">
               <p className="mb-1.5 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted">{group}</p>
@@ -232,7 +268,7 @@ export default function App() {
                 {TOOLS.filter((t) => t.group === group).map((t) => (
                   <button
                     key={t.id}
-                    onClick={() => setActiveId(t.id)}
+                    onClick={() => { setActiveId(t.id); setSidebarOpen(false); }}
                     className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition ${
                       t.id === activeId
                         ? "bg-accent/15 font-medium text-content"

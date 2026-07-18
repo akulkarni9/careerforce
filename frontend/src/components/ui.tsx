@@ -9,7 +9,7 @@ export function Panel({ title, subtitle, actions, children }: {
   readonly children: ReactNode;
 }) {
   return (
-    <section className="flex h-full flex-col gap-4 overflow-y-auto bg-bg p-6">
+    <section className="flex h-full flex-col gap-3 overflow-y-auto bg-bg p-4 sm:gap-4 sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-[15px] font-semibold text-content">{title}</h2>
