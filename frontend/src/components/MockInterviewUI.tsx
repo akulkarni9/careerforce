@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { Panel, PrimaryButton, ErrorMessage } from "./ui";
 import { useToast } from "./toast";
 import { useLocalStorage } from "../hooks";
+import { API_BASE } from "../api";
 
 interface ChatMessage {
   id: string;
@@ -24,7 +25,7 @@ function newId(): string {
 }
 
 async function postTurn(body: Record<string, string>): Promise<{ thread_id: string; reply: string }> {
-  const res = await fetch("/api/mock-interview", {
+  const res = await fetch(`${API_BASE}/api/mock-interview`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

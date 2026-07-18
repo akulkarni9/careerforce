@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
+import { API_BASE } from "./api";
 import JobApplicationUI from "./components/JobApplicationUI";
 import CareerAdvisorUI from "./components/CareerAdvisorUI";
 import MockInterviewUI from "./components/MockInterviewUI";
@@ -164,7 +165,7 @@ export default function App() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    fetch("/api/resume-info")
+    fetch(`${API_BASE}/api/resume-info`)
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => d && setResumeName(d.filename))
       .catch(() => {});
@@ -176,7 +177,7 @@ export default function App() {
     try {
       const form = new FormData();
       form.append("file", file);
-      const res = await fetch("/api/upload-resume", { method: "POST", body: form });
+      const res = await fetch(`${API_BASE}/api/upload-resume`, { method: "POST", body: form });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
         alert(d.detail ?? "Upload failed");

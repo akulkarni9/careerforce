@@ -3,6 +3,7 @@ import { Panel, PrimaryButton, ErrorMessage, LoadingRow, ResultCard } from "./ui
 import { useToast } from "./toast";
 import { useElapsedSeconds, useLocalStorage } from "../hooks";
 import { SHARED_KEYS, useSharedContext } from "../shared";
+import { API_BASE } from "../api";
 
 export interface ToolField {
   readonly name: string;
@@ -103,7 +104,7 @@ export default function PromptTool(props: PromptToolProps) {
     setLoading(true);
     try {
       if (stream) {
-        const res = await fetch(`${endpoint}/stream`, {
+        const res = await fetch(`${API_BASE}${endpoint}/stream`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(form),
@@ -120,7 +121,7 @@ export default function PromptTool(props: PromptToolProps) {
         });
         toast.success(`${title} ready.`);
       } else {
-        const res = await fetch(endpoint, {
+        const res = await fetch(`${API_BASE}${endpoint}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(form),

@@ -11,6 +11,7 @@ import {
 import { useToast } from "./toast";
 import { useElapsedSeconds, useLocalStorage } from "../hooks";
 import { useSharedContext } from "../shared";
+import { API_BASE } from "../api";
 
 type InputMode = "text" | "image";
 
@@ -66,7 +67,7 @@ export default function JobApplicationUI() {
         form.append("jd_image", imageFile);
       }
 
-      const res = await fetch("/api/analyze-job", { method: "POST", body: form });
+      const res = await fetch(`${API_BASE}/api/analyze-job`, { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.detail ?? `Server error ${res.status}`);

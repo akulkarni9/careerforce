@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Panel, PrimaryButton, ErrorMessage, LoadingRow, ResultCard } from "./ui";
 import { useToast } from "./toast";
 import { useElapsedSeconds, useLocalStorage } from "../hooks";
+import { API_BASE } from "../api";
 
 export default function CareerAdvisorUI() {
   const [query, setQuery] = useState("");
@@ -18,7 +19,7 @@ export default function CareerAdvisorUI() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/career-advice", {
+      const res = await fetch(`${API_BASE}/api/career-advice`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query }),
