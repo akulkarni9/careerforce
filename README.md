@@ -2,6 +2,12 @@
 
 A fully local, AI-powered career assistant built on **Gemma 4 26B** (via Ollama), **LangGraph**, and **PostgreSQL**. No cloud LLM calls, no data leaving your machine.
 
+## Live Demo
+
+**Frontend:** [https://careerforge.vercel.app](https://careerforce.vercel.app)
+
+> The frontend is hosted on Vercel as a static site. To use the app, the backend must be running locally on your machine and exposed via a Cloudflare Tunnel. See [Sharing with Others](#sharing-with-others) for setup instructions.
+
 ---
 
 ## Architecture Overview
@@ -219,6 +225,25 @@ OLLAMA_MODEL=gemma4:26b   ← replace with any model you have pulled
 ```
 
 `config.py` reads this at startup and `llm.py` passes it to every node via `build_llm()`. No code changes needed — restart uvicorn after editing.
+
+---
+
+## Sharing with Others
+
+The frontend is deployed at [https://careerforge.vercel.app](https://careerforge.vercel.app). To share the full app with others without hosting the backend in the cloud, expose your local backend via a Cloudflare Tunnel:
+
+```bash
+# Install cloudflared
+brew install cloudflared
+
+# Expose the local backend
+cloudflared tunnel --url http://localhost:8000
+# → prints: https://some-words.trycloudflare.com
+```
+
+Set `VITE_API_BASE` in your Vercel project's Environment Variables to the tunnel URL, then redeploy. Friends can now use `careerforce.vercel.app` while all inference runs on your local GPU.
+
+> **Note:** The tunnel URL changes each session. For a permanent URL, set up a [named Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) with your own domain.
 
 ---
 
